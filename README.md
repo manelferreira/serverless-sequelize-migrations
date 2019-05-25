@@ -13,6 +13,7 @@
     <a href="https://github.com/manelferreira/serverless-sequelize-migration">
         <img src="https://img.shields.io/github/license/manelferreira/serverless-sequelize-migrations.svg">
     </a>
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/manelferreira/serverless-sequelize-migrations.svg">
 </div>
 
 <div align="center">
