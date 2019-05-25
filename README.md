@@ -11,9 +11,9 @@ This is a plugin for Serverless framework that allows you to handle your sequeli
 
 
 ## Documentation
-- [Installation](#Installation)
-- [Setting up Sequelize database values](#Setting)
-- [Usage and commmand line options](#Usage)
+- [Installation](#installation)
+- [Setting up Sequelize database values](#setting-up-sequelize-database-values)
+- [Usage and commmand line options](#usage-and-command-line-options)
 
 
 ## Installation
