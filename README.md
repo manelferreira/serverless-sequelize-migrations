@@ -77,23 +77,23 @@ In order to see the options of each command individually, you can run `sls migra
 The commands (those that have some option) and it's options are presented below:
 - migrations create
 ```
-    --name / -n (required) ......... Specify the name of the migration to be created
+--name / -n (required) ... Specify the name of the migration to be created
 ```
 
 - migrations up
 ```
-    --rollback / -r ................ Rolls back applied migrations in case of error (default is false)
+--rollback / -r .......... Rolls back applied migrations in case of error (default is false)
 ```
 
 - migrations down
 ```
-    --times / -t ................... Specify how many times to roll back (default is 1)
-    --name / -n .................... Specify the name of the migration to be rolled back (e.g. "--name create-users.js")
+--times / -t ............. Specify how many times to roll back (default is 1)
+--name / -n .............. Specify the name of the migration to be rolled back (e.g. "--name create-users.js")
 ```
 
 - migrations list
 ```
-    --status / -s .................. Specify the status of migrations to be listed (--status pending [default] or --status executed)
+--status / -s ............ Specify the status of migrations to be listed (--status pending [default] or --status executed)
 ```
 
 
