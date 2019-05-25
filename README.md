@@ -1,6 +1,27 @@
-# Serverless Sequelize Migrations
+<h1 align="center">Serverless Sequelize Migrations</h1>
 
-This is a plugin for Serverless framework that allows you to handle your sequelize migrations.
+<div align="center">
+  <strong>A plugin to manage sequelize migrations on serverless projects</strong>
+</div>
+
+<br />
+
+<div align="center">
+    <a href="http://www.serverless.com">
+        <img src="http://public.serverless.com/badges/v3.svg">
+    </a>
+    <a href="https://github.com/manelferreira/serverless-sequelize-migration">
+        <img src="https://img.shields.io/github/license/manelferreira/serverless-sequelize-migrations.svg">
+    </a>
+</div>
+
+<div align="center">
+  <sub>Built with ❤︎ by
+  <a href="https://github.com/manelferreira">Manoel Ferreira</a> for
+  <a href="https://soldegiz.com">Sol de Giz</a> project.
+</div>
+    
+<br />
 
 **Features**:
 - Create migration file
