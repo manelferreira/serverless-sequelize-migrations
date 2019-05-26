@@ -1,7 +1,8 @@
 {
   "name": "serverless-sequelize-migrations",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "url": "https://github.com/manelferreira/serverless-sequelize-migrations",
+  "description": "A Serverless plugin to manage sequelize migrations",
   "main": "index.js",
   "scripts": {
     "test": "nyc mocha -t 30000",
