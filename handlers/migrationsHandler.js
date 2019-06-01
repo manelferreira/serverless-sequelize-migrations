@@ -152,7 +152,6 @@ module.exports = class MigrationsHandler {
       const rollbackMigrations = executedMigrations.reverse().slice(0, times);
 
       if (rollbackMigrations.length > 0) {
-        console.log(rollbackMigrations);
         await this.umzug
           .down({
             migrations: rollbackMigrations

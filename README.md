@@ -8,10 +8,10 @@
 
 <div align="center">
     <a href="http://www.serverless.com">
-        <img src="http://public.serverless.com/badges/v3.svg">
+      <img src="http://public.serverless.com/badges/v3.svg">
     </a>
-    <a href="https://github.com/manelferreira/serverless-sequelize-migration">
-        <img src="https://img.shields.io/github/license/manelferreira/serverless-sequelize-migrations.svg">
+    <a href="https://github.com/manelferreira/serverless-sequelize-migrations/blob/master/LICENSE">
+      <img src="https://img.shields.io/github/license/manelferreira/serverless-sequelize-migrations.svg">
     </a>
     <img alt="GitHub stars" src="https://img.shields.io/github/stars/manelferreira/serverless-sequelize-migrations.svg">
 </div>
@@ -52,19 +52,19 @@ plugins:
     - serverless-sequelize-migrations
 ```
 
-You can check wether the plugin is ready to be used through the terminal. To do so, type the following command on the CLI:
+You can check whether the plugin is ready to be used through the terminal. To do so, type the following command on the CLI:
 
 `serverless`
 
 the console should display _SequelizeMigrations_  as one of the available plugins in your Serverless project.
 
-## Setting up Sequelize database values
+## Setting up Sequelize
 
-For the plugin to work correctly, you have to inform the database information as environment variables on the service provider section as follows:
+For the plugin to work correctly, you have to set the database information as environment variables on the service provider section as follows:
 ```
 provider:
   environment:
-    DB_DIALECT: 'mysql' // or any other
+    DB_DIALECT: 'database_dialect' /* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */
     DB_NAME: 'database_name'
     DB_USERNAME: 'database_username'
     DB_PASSWORD: 'database_password'
@@ -75,6 +75,15 @@ Replace the variables with the information of your own database.
 
 Obs: This plugin does not have support to create the database itself.
 
+As per [Sequelize docs](http://docs.sequelizejs.com/manual/getting-started), you'll have to manually install the driver for your database of choice:
+
+```
+# One of the following:
+$ npm install --save pg pg-hstore # Postgres
+$ npm install --save mysql2 # MySQL
+$ npm install --save mariadb # MariaDB
+$ npm install --save tedious # Microsoft SQL Server
+```
 
 ## Usage and command line options
 To see the available commands of the plugin, run `sls migrations` on the terminal. The following should appear:
