@@ -215,7 +215,7 @@ describe("Serverless sequelize migrations", () => {
   });
 
   describe("Set up migrations handler", () => {
-    before(() => {
+    beforeEach(() => {
       this.serverless = {
         cli: {
           log: () => {}
@@ -231,35 +231,129 @@ describe("Serverless sequelize migrations", () => {
       };
     });
 
-    it("creates instance with success", () => {
-      const setupDatabaseStub = sinon
-        .stub(SlsSequelizeMigrations.prototype, "setUpDatabaseValues")
-        .returns({
-          DIALECT: "mysql",
-          PORT: "3306",
-          NAME: "name",
-          USERNAME: "username",
-          PASSWORD: "password"
-        });
+    context("creates instance with success", () => {
+      it("creates simple instance", () => {
+        const setupDatabaseStub = sinon
+          .stub(SlsSequelizeMigrations.prototype, "setUpDatabaseValues")
+          .returns({
+            DIALECT: "mysql",
+            PORT: "3306",
+            NAME: "name",
+            USERNAME: "username",
+            PASSWORD: "password"
+          });
 
-      const migrationsHandlerInitializeStub = sinon.stub(
-        MigrationsHandler.prototype,
-        "initialize"
-      );
+        const migrationsHandlerInitializeStub = sinon.stub(
+          MigrationsHandler.prototype,
+          "initialize"
+        );
 
-      const plugin = new SlsSequelizeMigrations(this.serverless, this.database);
+        const plugin = new SlsSequelizeMigrations(this.serverless, {});
 
-      const migrationsHandler = plugin.setUpMigrationsHandler();
+        const migrationsHandler = plugin.setUpMigrationsHandler();
 
-      sinon.assert.calledOnce(
-        SlsSequelizeMigrations.prototype.setUpDatabaseValues
-      );
-      sinon.assert.calledOnce(MigrationsHandler.prototype.initialize);
+        sinon.assert.calledOnce(
+          SlsSequelizeMigrations.prototype.setUpDatabaseValues
+        );
+        sinon.assert.calledOnce(MigrationsHandler.prototype.initialize);
 
-      expect(migrationsHandler).to.be.instanceOf(MigrationsHandler);
+        expect(migrationsHandler).to.be.instanceOf(MigrationsHandler);
+        expect(migrationsHandler.path).to.be.eq("./migrations");
+        expect(migrationsHandler.verbose).to.be.eq(false);
 
-      setupDatabaseStub.restore();
-      migrationsHandlerInitializeStub.restore();
+        setupDatabaseStub.restore();
+        migrationsHandlerInitializeStub.restore();
+      });
+
+      it("creates instance with migrationsPath variable defined on service custom section", () => {
+        this.serverless = {
+          ...this.serverless,
+          service: {
+            custom: {
+              migrationsPath: "./some/migrations/path"
+            }
+          }
+        };
+
+        const setupDatabaseStub = sinon
+          .stub(SlsSequelizeMigrations.prototype, "setUpDatabaseValues")
+          .returns({
+            DIALECT: "mysql",
+            PORT: "3306",
+            NAME: "name",
+            USERNAME: "username",
+            PASSWORD: "password"
+          });
+
+        const migrationsHandlerInitializeStub = sinon.stub(
+          MigrationsHandler.prototype,
+          "initialize"
+        );
+
+        const plugin = new SlsSequelizeMigrations(this.serverless, {});
+
+        const migrationsHandler = plugin.setUpMigrationsHandler();
+
+        sinon.assert.calledOnce(
+          SlsSequelizeMigrations.prototype.setUpDatabaseValues
+        );
+        sinon.assert.calledOnce(MigrationsHandler.prototype.initialize);
+
+        expect(migrationsHandler).to.be.instanceOf(MigrationsHandler);
+        expect(migrationsHandler.path).to.be.eq(
+          this.serverless.service.custom.migrationsPath
+        );
+        expect(migrationsHandler.verbose).to.be.eq(false);
+
+        setupDatabaseStub.restore();
+        migrationsHandlerInitializeStub.restore();
+      });
+
+      it("creates instance overriding migrationsPath variable with '--path' CLI option", () => {
+        this.serverless = {
+          ...this.serverless,
+          service: {
+            custom: {
+              migrationsPath: "./some/migrations/path"
+            }
+          }
+        };
+
+        const setupDatabaseStub = sinon
+          .stub(SlsSequelizeMigrations.prototype, "setUpDatabaseValues")
+          .returns({
+            DIALECT: "mysql",
+            PORT: "3306",
+            NAME: "name",
+            USERNAME: "username",
+            PASSWORD: "password"
+          });
+
+        const migrationsHandlerInitializeStub = sinon.stub(
+          MigrationsHandler.prototype,
+          "initialize"
+        );
+
+        const options = {
+          path: "override/migrations/path/test"
+        };
+
+        const plugin = new SlsSequelizeMigrations(this.serverless, options);
+
+        const migrationsHandler = plugin.setUpMigrationsHandler();
+
+        sinon.assert.calledOnce(
+          SlsSequelizeMigrations.prototype.setUpDatabaseValues
+        );
+        sinon.assert.calledOnce(MigrationsHandler.prototype.initialize);
+
+        expect(migrationsHandler).to.be.instanceOf(MigrationsHandler);
+        expect(migrationsHandler.path).to.be.eq(options.path);
+        expect(migrationsHandler.verbose).to.be.eq(false);
+
+        setupDatabaseStub.restore();
+        migrationsHandlerInitializeStub.restore();
+      });
     });
   });
 

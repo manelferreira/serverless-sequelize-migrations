@@ -1,6 +1,6 @@
 {
   "name": "serverless-sequelize-migrations",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "url": "https://github.com/manelferreira/serverless-sequelize-migrations",
   "description": "A Serverless plugin to manage sequelize migrations",
   "keywords": [
@@ -24,6 +24,7 @@
   "author": "Manoel Ferreira Neto",
   "license": "ISC",
   "dependencies": {
+    "lodash": "^4.17.14",
     "sequelize": "^5.8.6",
     "sequelize-cli": "^5.4.0",
     "umzug": "^2.2.0"
