@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const utils = require("./lib/utils");
 const MigrationsHandler = require("./handlers/migrationsHandler");
 const SequelizeCliHandler = require("./handlers/sequelizeCliHandler");
@@ -92,7 +93,10 @@ class SequelizeMigrations {
     };
 
     this.verbose = this.options.verbose || this.options.v;
-    this.path = this.options.path || this.options.p;
+    this.path =
+      this.options.path ||
+      this.options.p ||
+      _.get(this.serverless, "service.custom.migrationsPath");
   }
 
   showPluginInfo() {

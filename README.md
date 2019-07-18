@@ -14,6 +14,9 @@
       <img src="https://img.shields.io/github/license/manelferreira/serverless-sequelize-migrations.svg">
     </a>
     <img alt="GitHub stars" src="https://img.shields.io/github/stars/manelferreira/serverless-sequelize-migrations.svg">
+    <a href="https://www.npmjs.com/package/serverless-sequelize-migrations">
+      <img alt="npm" src="https://img.shields.io/npm/dt/serverless-sequelize-migrations.svg?label=npm%20downloads">
+    </a>
 </div>
 
 <div align="center">
@@ -128,6 +131,15 @@ The commands (those that have some option) and it's options are presented below:
 ```
 --status / -s ............ Specify the status of migrations to be listed (--status pending [default] or --status executed)
 ```
+
+### Custom migrations path
+You can also define a migrations path variable on the custom section of your project service file.
+```
+custom:
+  migrationsPath: './custom/migrations/path'
+```
+
+Important: if you inform the --path option through the CLI, this configuration will be ignored.
 
 
 ### Credits and inspiration
