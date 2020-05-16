@@ -430,22 +430,28 @@ describe("Serverless sequelize migrations", () => {
           log: () => {}
         }
       };
-
-      this.database = {
-        DB_DIALECT: "mysql",
-        DB_PORT: "3306",
-        DB_NAME: "name",
-        DB_USERNAME: "username",
-        DB_PASSWORD: "password"
-      };
     });
 
     it("creates instance with success", () => {
-      const plugin = new SlsSequelizeMigrations(this.serverless, this.database);
+      const plugin = new SlsSequelizeMigrations(this.serverless, {});
 
       const sequelizeCLiHandler = plugin.setUpSequelizeCliHandler();
 
       expect(sequelizeCLiHandler).to.be.instanceOf(SequelizeCliHandler);
+      expect(sequelizeCLiHandler.path).to.be.eq("./migrations");
+    });
+
+    it("creates instance with migrationsPath variable defined on service custom section", () => {
+      const options = {
+        path: "override/migrations/path/test"
+      };
+
+      const plugin = new SlsSequelizeMigrations(this.serverless, options);
+
+      const sequelizeCLiHandler = plugin.setUpSequelizeCliHandler();
+
+      expect(sequelizeCLiHandler).to.be.instanceOf(SequelizeCliHandler);
+      expect(sequelizeCLiHandler.path).to.be.eq(options.path);
     });
   });
 
@@ -467,7 +473,7 @@ describe("Serverless sequelize migrations", () => {
     });
 
     it("show plugin info with success", () => {
-      const plugin = new SlsSequelizeMigrations(this.serverless, this.database);
+      const plugin = new SlsSequelizeMigrations(this.serverless, {});
 
       plugin.showPluginInfo();
 

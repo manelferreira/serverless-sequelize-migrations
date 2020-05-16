@@ -197,7 +197,7 @@ class SequelizeMigrations {
   }
 
   setUpSequelizeCliHandler() {
-    return new SequelizeCliHandler(this.serverless);
+    return new SequelizeCliHandler(this.serverless, this.path);
   }
 
   createMigration() {
