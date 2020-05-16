@@ -20,9 +20,8 @@
 </div>
 
 <div align="center">
-  <sub>Built with ❤︎ by
-  <a href="https://github.com/manelferreira">Manoel Ferreira</a> for
-  <a href="https://soldegiz.com">Sol de Giz</a> project.
+  <sub>Built with :coffee: by
+  <a href="https://github.com/manelferreira">Manoel Ferreira</a>
 </div>
     
 <br />
