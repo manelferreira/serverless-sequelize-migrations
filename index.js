@@ -117,7 +117,7 @@ class SequelizeMigrations {
       error = "DB_NAME";
     } else if (!process.env.DB_USERNAME) {
       error = "DB_USERNAME";
-    } else if (!process.env.DB_PASSWORD) {
+    } else if (!process.env.hasOwnProperty('DB_PASSWORD')) {
       error = "DB_PASSWORD";
     }
 
