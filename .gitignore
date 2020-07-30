@@ -64,4 +64,7 @@ jspm_packages/
 # Serverless directories
 .serverless/
 
+# Editor config
+.idea/
+
 # End of https://www.gitignore.io/api/node

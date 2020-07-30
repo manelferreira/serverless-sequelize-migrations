@@ -103,22 +103,39 @@ class SequelizeMigrations {
     this.serverless.cli.generateCommandsHelp(["migrations"]);
   }
 
+  static isConnectionUrlValid() {
+    return process.env.DB_CONNECTION_URL.match(
+      new RegExp(
+        "^(mysql|mariadb|postgres|mssql)(:\\/\\/)(.*)(:)(.*@)(.*:)([0-9]*)(\\/)(.*)"
+      )
+    );
+  }
+
   setUpDatabaseValues() {
     utils.setEnvironment(this.serverless);
 
     let error = false;
-    if (!process.env.DB_DIALECT) {
-      error = "DB_DIALECT";
-    } else if (!process.env.DB_HOST) {
-      error = "DB_HOST";
-    } else if (!process.env.DB_PORT) {
-      error = "DB_PORT";
-    } else if (!process.env.DB_NAME) {
-      error = "DB_NAME";
-    } else if (!process.env.DB_USERNAME) {
-      error = "DB_USERNAME";
-    } else if (!process.env.hasOwnProperty('DB_PASSWORD')) {
-      error = "DB_PASSWORD";
+    if (!process.env.DB_CONNECTION_URL) {
+      if (!process.env.DB_DIALECT) {
+        error = "DB_DIALECT";
+      } else if (!process.env.DB_HOST) {
+        error = "DB_HOST";
+      } else if (!process.env.DB_PORT) {
+        error = "DB_PORT";
+      } else if (!process.env.DB_NAME) {
+        error = "DB_NAME";
+      } else if (!process.env.DB_USERNAME) {
+        error = "DB_USERNAME";
+      } else if (
+        !Object.prototype.hasOwnProperty.call(process.env, "DB_PASSWORD")
+      ) {
+        error = "DB_PASSWORD";
+      }
+    } else if (!SequelizeMigrations.isConnectionUrlValid()) {
+      this.serverless.cli.log(
+        `DB_CONNECTION_URL environment variable is not valid`
+      );
+      process.exit(1);
     }
 
     if (error) {
@@ -126,13 +143,19 @@ class SequelizeMigrations {
       process.exit(1);
     }
 
-    return {
+    const db = {
       DIALECT: process.env.DB_DIALECT,
       HOST: process.env.DB_HOST,
       PORT: process.env.DB_PORT,
       NAME: process.env.DB_NAME,
       USERNAME: process.env.DB_USERNAME,
       PASSWORD: process.env.DB_PASSWORD
+    };
+
+    return {
+      CONNECTION_URL: process.env.DB_CONNECTION_URL
+        ? process.env.DB_CONNECTION_URL
+        : `${db.DIALECT}://${db.USERNAME}:${db.PASSWORD}@${db.HOST}:${db.PORT}/${db.NAME}`
     };
   }
 

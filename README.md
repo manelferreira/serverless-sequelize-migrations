@@ -73,6 +73,12 @@ provider:
     DB_HOST: 'database_host'
     DB_PORT: 'database_port'
 ```
+or by using DB_CONNECTION_URL
+```
+provider:
+  environment:
+    DB_CONNECTION_URL: database_dialect://database_username:database_password@database_host:database_port/database_name`
+```
 Replace the variables with the information of your own database.
 
 Obs: This plugin does not have support to create the database itself.
