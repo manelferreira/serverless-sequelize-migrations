@@ -18,12 +18,7 @@ describe("Migrations Handler", () => {
           }
         };
         this.database = {
-          DIALECT: "mysql",
-          HOST: "localhost",
-          PORT: "3306",
-          NAME: "name",
-          USERNAME: "username",
-          PASSWORD: "password"
+          CONNECTION_URL: "mysql://username:password@localhost:3306/name"
         };
       });
 
@@ -96,12 +91,7 @@ describe("Migrations Handler", () => {
 
       it("creates sequelize instance with success", () => {
         const database = {
-          DIALECT: "mysql",
-          HOST: "localhost",
-          PORT: "3306",
-          NAME: "name",
-          USERNAME: "username",
-          PASSWORD: "password"
+          CONNECTION_URL: "mysql://username:password@localhost:3306/name"
         };
 
         const migrationsHandler = new MigrationsHandler(
@@ -111,13 +101,7 @@ describe("Migrations Handler", () => {
 
         const sequelize = migrationsHandler.initSequelize();
 
-        expect(sequelize.options.dialect).to.eq(database.DIALECT);
         expect(sequelize.options.define.freezeTableName).to.eq(true);
-        expect(sequelize.config.database).to.eq(database.NAME);
-        expect(sequelize.config.username).to.eq(database.USERNAME);
-        expect(sequelize.config.password).to.eq(database.PASSWORD);
-        expect(sequelize.config.host).to.eq(database.HOST);
-        expect(sequelize.config.port).to.eq(database.PORT);
       });
 
       it("fails if DB_DIALECT is missing", () => {
@@ -144,12 +128,7 @@ describe("Migrations Handler", () => {
         };
 
         this.database = {
-          DIALECT: "mysql",
-          HOST: "localhost",
-          PORT: "3306",
-          NAME: "name",
-          USERNAME: "username",
-          PASSWORD: "password"
+          CONNECTION_URL: "mysql://username:password@localhost:3306/name"
         };
       });
 
@@ -210,12 +189,7 @@ describe("Migrations Handler", () => {
         };
 
         this.database = {
-          DIALECT: "mysql",
-          HOST: "localhost",
-          PORT: "3306",
-          NAME: "name",
-          USERNAME: "username",
-          PASSWORD: "password"
+          CONNECTION_URL: "mysql://username:password@localhost:3306/name"
         };
       });
 
@@ -571,12 +545,7 @@ describe("Migrations Handler", () => {
         };
 
         this.database = {
-          DIALECT: "mysql",
-          HOST: "localhost",
-          PORT: "3306",
-          NAME: "name",
-          USERNAME: "username",
-          PASSWORD: "password"
+          CONNECTION_URL: "mysql://username:password@localhost:3306/name"
         };
       });
 
@@ -876,12 +845,7 @@ describe("Migrations Handler", () => {
         };
 
         this.database = {
-          DIALECT: "mysql",
-          HOST: "localhost",
-          PORT: "3306",
-          NAME: "name",
-          USERNAME: "username",
-          PASSWORD: "password"
+          CONNECTION_URL: "mysql://username:password@localhost:3306/name"
         };
       });
 
@@ -972,12 +936,7 @@ describe("Migrations Handler", () => {
         };
 
         this.database = {
-          DIALECT: "mysql",
-          HOST: "localhost",
-          PORT: "3306",
-          NAME: "name",
-          USERNAME: "username",
-          PASSWORD: "password"
+          CONNECTION_URL: "mysql://username:password@localhost:3306/name"
         };
       });
 

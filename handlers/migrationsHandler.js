@@ -16,20 +16,12 @@ module.exports = class MigrationsHandler {
   }
 
   initSequelize() {
-    return new Sequelize(
-      this.database.NAME,
-      this.database.USERNAME,
-      this.database.PASSWORD,
-      {
-        dialect: this.database.DIALECT,
-        host: this.database.HOST,
-        port: this.database.PORT,
-        define: {
-          freezeTableName: true
-        },
-        logging: this.verbose
-      }
-    );
+    return new Sequelize(this.database.CONNECTION_URL, {
+      define: {
+        freezeTableName: true
+      },
+      logging: this.verbose
+    });
   }
 
   initUmzug() {
