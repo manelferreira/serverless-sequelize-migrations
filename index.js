@@ -103,64 +103,8 @@ class SequelizeMigrations {
     this.serverless.cli.generateCommandsHelp(["migrations"]);
   }
 
-  static isConnectionUrlValid() {
-    return process.env.DB_CONNECTION_URL.match(
-      new RegExp(
-        "^(mysql|mariadb|postgres|mssql)(:\\/\\/)(.*)(:)(.*@)(.*:)([0-9]*)(\\/)(.*)"
-      )
-    );
-  }
-
-  setUpDatabaseValues() {
-    utils.setEnvironment(this.serverless);
-
-    let error = false;
-    if (!process.env.DB_CONNECTION_URL) {
-      if (!process.env.DB_DIALECT) {
-        error = "DB_DIALECT";
-      } else if (!process.env.DB_HOST) {
-        error = "DB_HOST";
-      } else if (!process.env.DB_PORT) {
-        error = "DB_PORT";
-      } else if (!process.env.DB_NAME) {
-        error = "DB_NAME";
-      } else if (!process.env.DB_USERNAME) {
-        error = "DB_USERNAME";
-      } else if (
-        !Object.prototype.hasOwnProperty.call(process.env, "DB_PASSWORD")
-      ) {
-        error = "DB_PASSWORD";
-      }
-    } else if (!SequelizeMigrations.isConnectionUrlValid()) {
-      this.serverless.cli.log(
-        `DB_CONNECTION_URL environment variable is not valid`
-      );
-      process.exit(1);
-    }
-
-    if (error) {
-      this.serverless.cli.log(`Missing ${error} in the environment variables`);
-      process.exit(1);
-    }
-
-    const db = {
-      DIALECT: process.env.DB_DIALECT,
-      HOST: process.env.DB_HOST,
-      PORT: process.env.DB_PORT,
-      NAME: process.env.DB_NAME,
-      USERNAME: process.env.DB_USERNAME,
-      PASSWORD: process.env.DB_PASSWORD
-    };
-
-    return {
-      CONNECTION_URL: process.env.DB_CONNECTION_URL
-        ? process.env.DB_CONNECTION_URL
-        : `${db.DIALECT}://${db.USERNAME}:${db.PASSWORD}@${db.HOST}:${db.PORT}/${db.NAME}`
-    };
-  }
-
   setUpMigrationsHandler() {
-    const database = this.setUpDatabaseValues();
+    const database = this.setUpDatabaseConnectionValues();
 
     const migrationsHandler = new MigrationsHandler(
       this.serverless,
@@ -172,6 +116,75 @@ class SequelizeMigrations {
     migrationsHandler.initialize();
 
     return migrationsHandler;
+  }
+
+  setUpDatabaseConnectionValues() {
+    utils.setEnvironment(this.serverless);
+
+    let connectionUrl = process.env.DB_CONNECTION_URL;
+
+    if (!connectionUrl) {
+      connectionUrl = this.buildDatabaseConnectionUrlFromIndividualProperties();
+    }
+
+    if (!utils.isDatabaseConnectionUrlValid(connectionUrl)) {
+      this.serverless.cli.log(
+        `Database connection settings are invalid or results in malformed connection URL: ${connectionUrl}`
+      );
+      process.exit(1);
+    }
+
+    return {
+      CONNECTION_URL: connectionUrl
+    };
+  }
+
+  buildDatabaseConnectionUrlFromIndividualProperties() {
+    let missingProperty = this
+      .checkForMissingDatabaseConnectionIndividualProperties();
+
+    if (missingProperty) {
+      this.serverless.cli.log(`Missing ${missingProperty} in the environment variables`);
+      process.exit(1);
+    }
+
+    const connectionProperties = {
+      DIALECT: process.env.DB_DIALECT,
+      HOST: process.env.DB_HOST,
+      PORT: process.env.DB_PORT,
+      NAME: process.env.DB_NAME,
+      USERNAME: process.env.DB_USERNAME,
+      PASSWORD: process.env.DB_PASSWORD
+    };
+
+    return `${connectionProperties.DIALECT}`
+      + `://${connectionProperties.USERNAME}`
+      + `:${connectionProperties.PASSWORD}`
+      + `@${connectionProperties.HOST}`
+      + `:${connectionProperties.PORT}`
+      + `/${connectionProperties.NAME}`;
+  }
+
+  checkForMissingDatabaseConnectionIndividualProperties() {
+    let missing = false;
+
+    if (!process.env.DB_DIALECT) {
+      missing = "DB_DIALECT";
+    } else if (!process.env.DB_HOST) {
+      missing = "DB_HOST";
+    } else if (!process.env.DB_PORT) {
+      missing = "DB_PORT";
+    } else if (!process.env.DB_NAME) {
+      missing = "DB_NAME";
+    } else if (!process.env.DB_USERNAME) {
+      missing = "DB_USERNAME";
+    } else if (
+      !Object.prototype.hasOwnProperty.call(process.env, "DB_PASSWORD")
+    ) {
+      missing = "DB_PASSWORD";
+    }
+
+    return missing;
   }
 
   async migrate() {
