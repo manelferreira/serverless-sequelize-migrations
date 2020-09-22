@@ -150,7 +150,7 @@ class SequelizeMigrations {
 
     const connectionProperties = {
       DIALECT: process.env.DB_DIALECT,
-      HOST: process.env.DB_HOST,
+      HOST: this.getDBHost(),
       PORT: process.env.DB_PORT,
       NAME: process.env.DB_NAME,
       USERNAME: process.env.DB_USERNAME,
@@ -165,12 +165,15 @@ class SequelizeMigrations {
       + `/${connectionProperties.NAME}`;
   }
 
+  getDBHost() {
+    return process.env.DB_HOST || this.options.host
+  }
   checkForMissingDatabaseConnectionIndividualProperties() {
     let missing = false;
-
+    
     if (!process.env.DB_DIALECT) {
       missing = "DB_DIALECT";
-    } else if (!process.env.DB_HOST) {
+    } else if (!this.getDBHost()) {
       missing = "DB_HOST";
     } else if (!process.env.DB_PORT) {
       missing = "DB_PORT";
