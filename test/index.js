@@ -46,6 +46,22 @@ describe("Serverless sequelize migrations", () => {
     });
 
     beforeEach(() => {
+      delete process.env.DB_DIALECT;
+      delete process.env.DB_HOST;
+      delete process.env.DB_PORT;
+      delete process.env.DB_NAME;
+      delete process.env.DB_USERNAME;
+      delete process.env.DB_PASSWORD;
+      delete process.env.DB_CONNECTION_URL;
+
+      delete this.serverless.service.provider.environment.DB_DIALECT;
+      delete this.serverless.service.provider.environment.DB_HOST;
+      delete this.serverless.service.provider.environment.DB_PORT;
+      delete this.serverless.service.provider.environment.DB_NAME;
+      delete this.serverless.service.provider.environment.DB_USERNAME;
+      delete this.serverless.service.provider.environment.DB_PASSWORD;
+      delete this.serverless.service.provider.environment.DB_CONNECTION_URL;
+
       this.processStub = sinon.stub(process, "exit");
     });
 
@@ -57,6 +73,15 @@ describe("Serverless sequelize migrations", () => {
       delete process.env.DB_USERNAME;
       delete process.env.DB_PASSWORD;
       delete process.env.DB_CONNECTION_URL;
+
+      delete this.serverless.service.provider.environment.DB_DIALECT;
+      delete this.serverless.service.provider.environment.DB_HOST;
+      delete this.serverless.service.provider.environment.DB_PORT;
+      delete this.serverless.service.provider.environment.DB_NAME;
+      delete this.serverless.service.provider.environment.DB_USERNAME;
+      delete this.serverless.service.provider.environment.DB_PASSWORD;
+      delete this.serverless.service.provider.environment.DB_CONNECTION_URL;
+
       this.processStub.restore();
     });
 
@@ -208,7 +233,7 @@ describe("Serverless sequelize migrations", () => {
       });
     });
 
-    context("When all required properties are set", () => {
+    context("When all required properties are set through environment variables", () => {
       context("When DB_PASSWORD is falsy", () => {
         context("When value is set as null", () => {
           it("returns database data", () => {
@@ -284,6 +309,80 @@ describe("Serverless sequelize migrations", () => {
         });
       });
     });
+
+    context("When all required properties are set through CLI options", () => {
+      context("When DB_PASSWORD is falsy", () => {
+        context("When value is set as null", () => {
+          it("returns database data", () => {
+            const cliOptionsDbData = {
+              dbDialect: "cliSetDialect",
+              dbHost: "cliSetHost",
+              dbPort: "cliSetPort",
+              dbName: "cliSetName",
+              dbUsername: "cliSetUsername",
+              dbPassword: null
+            };
+
+            const logFunction = sinon.spy();
+            this.serverless.cli.log = logFunction;
+
+            const plugin = new SlsSequelizeMigrations(this.serverless, cliOptionsDbData);
+
+            const database = plugin.setUpDatabaseConnectionValues();
+
+            expect(database).to.be.eql({
+              CONNECTION_URL: `${cliOptionsDbData.dbDialect}://${cliOptionsDbData.dbUsername}:@${cliOptionsDbData.dbHost}:${cliOptionsDbData.dbPort}/${cliOptionsDbData.dbName}`
+            });
+          });
+        });
+
+        context("When value is set as an empty string", () => {
+          it("returns database data", () => {
+            const cliOptionsDbData = {
+              dbDialect: "cliSetDialect",
+              dbHost: "cliSetHost",
+              dbPort: "cliSetPort",
+              dbName: "cliSetName",
+              dbUsername: "cliSetUsername",
+              dbPassword: ""
+            };
+
+            const logFunction = sinon.spy();
+            this.serverless.cli.log = logFunction;
+
+            const plugin = new SlsSequelizeMigrations(this.serverless, cliOptionsDbData);
+
+            const database = plugin.setUpDatabaseConnectionValues();
+
+            expect(database).to.be.eql({
+              CONNECTION_URL: `${cliOptionsDbData.dbDialect}://${cliOptionsDbData.dbUsername}:${cliOptionsDbData.dbPassword}@${cliOptionsDbData.dbHost}:${cliOptionsDbData.dbPort}/${cliOptionsDbData.dbName}`
+            });
+          });
+        });
+      });
+
+      it("returns database data", () => {
+        const cliOptionsDbData = {
+          dbDialect: "cliSetDialect",
+          dbHost: "cliSetHost",
+          dbPort: "cliSetPort",
+          dbName: "cliSetName",
+          dbUsername: "cliSetUsername",
+          dbPassword: "cliSetPassword"
+        };
+
+        const logFunction = sinon.spy();
+        this.serverless.cli.log = logFunction;
+
+        const plugin = new SlsSequelizeMigrations(this.serverless, cliOptionsDbData);
+
+        const database = plugin.setUpDatabaseConnectionValues();
+
+        expect(database).to.be.eql({
+          CONNECTION_URL: `${cliOptionsDbData.dbDialect}://${cliOptionsDbData.dbUsername}:${cliOptionsDbData.dbPassword}@${cliOptionsDbData.dbHost}:${cliOptionsDbData.dbPort}/${cliOptionsDbData.dbName}`
+        });
+      });
+    })
   });
 
   describe("Set up migrations handler", () => {

@@ -178,11 +178,9 @@ class SequelizeMigrations {
       missing = "DB_NAME";
     } else if (!this.getDbUsernameIndividualProperty()) {
       missing = "DB_USERNAME";
-    } else if (!this.getDbPasswordIndividualProperty()) {
+    } else if (!this.dbPasswordIndividualPropertyIsSet()) {
       missing = "DB_PASSWORD";
     }
-
-    // !Object.prototype.hasOwnProperty.call(process.env, "DB_PASSWORD")
 
     return missing;
   }
@@ -200,7 +198,7 @@ class SequelizeMigrations {
   }
 
   getDbNameIndividualProperty() {
-    return this.options.DbName || process.env.DB_NAME;
+    return this.options.dbName || process.env.DB_NAME;
   }
 
   getDbUsernameIndividualProperty() {
@@ -208,7 +206,17 @@ class SequelizeMigrations {
   }
 
   getDbPasswordIndividualProperty() {
-    return this.options.dbPassword || process.env.DB_PASSWORD;
+    let dbPassword = this.options.dbPassword || process.env.DB_PASSWORD;
+
+    if (!_.isNil(dbPassword))
+      return dbPassword;
+
+    return '';
+  }
+
+  dbPasswordIndividualPropertyIsSet() {
+    return Object.prototype.hasOwnProperty.call(this.options, "dbPassword") 
+      || Object.prototype.hasOwnProperty.call(process.env, "DB_PASSWORD");
   }
 
   async migrate() {
