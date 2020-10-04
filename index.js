@@ -9,6 +9,33 @@ class SequelizeMigrations {
     this.serverless = serverless;
     this.options = options;
 
+    const dbConnectionOptions = {
+      dbDialect: {
+        usage: "Specify the database dialect (one of: 'mysql', 'mariadb', 'postgres', 'mssql')",
+        default: ''
+      },
+      dbHost: {
+        usage: "Specify the database host",
+        default: ''
+      },
+      dbPort: {
+        usage: "Specify the database port",
+        default: ''
+      },
+      dbName: {
+        usage: "Specify the database name",
+        default: ''
+      },
+      dbUsername: {
+        usage: "Specify the database username",
+        default: ''
+      },
+      dbPassword: {
+        usage: "Specify the database password",
+        default: ''
+      }
+    }
+
     this.commands = {
       migrations: {
         usage: "Sequelize migrations management for Serverless",
@@ -45,7 +72,8 @@ class SequelizeMigrations {
                   "Rolls back applied migrations in case of error (default is false)",
                 shortcut: "r",
                 default: false
-              }
+              },
+              ...dbConnectionOptions
             }
           },
           down: {
@@ -61,12 +89,16 @@ class SequelizeMigrations {
                 usage:
                   'Specify the name of the migration to be rolled back (e.g. "--name create-users.js")',
                 shortcut: "n"
-              }
+              },
+              ...dbConnectionOptions
             }
           },
           reset: {
             usage: "Rolls back all migrations",
-            lifecycleEvents: ["run"]
+            lifecycleEvents: ["run"],
+            options: {
+              ...dbConnectionOptions
+            }
           },
           list: {
             usage: "Shows a list of migrations",
@@ -77,7 +109,8 @@ class SequelizeMigrations {
                   "Specify the status of migrations to be listed (--status pending [default] or --status executed)",
                 shortcut: "s",
                 default: "pending"
-              }
+              },
+              ...dbConnectionOptions
             }
           }
         }
