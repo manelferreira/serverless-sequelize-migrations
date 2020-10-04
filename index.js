@@ -149,12 +149,12 @@ class SequelizeMigrations {
     }
 
     const connectionProperties = {
-      DIALECT: process.env.DB_DIALECT,
-      HOST: process.env.DB_HOST,
-      PORT: process.env.DB_PORT,
-      NAME: process.env.DB_NAME,
-      USERNAME: process.env.DB_USERNAME,
-      PASSWORD: process.env.DB_PASSWORD
+      DIALECT: this.getDbDialectIndividualProperty(),
+      HOST: this.getDbHostIndividualProperty(),
+      PORT: this.getDbPortIndividualProperty(),
+      NAME: this.getDbNameIndividualProperty(),
+      USERNAME: this.getDbUsernameIndividualProperty(),
+      PASSWORD: this.getDbPasswordIndividualProperty()
     };
 
     return `${connectionProperties.DIALECT}`
@@ -168,23 +168,47 @@ class SequelizeMigrations {
   checkForMissingDatabaseConnectionIndividualProperties() {
     let missing = false;
 
-    if (!process.env.DB_DIALECT) {
+    if (!this.getDbDialectIndividualProperty()) {
       missing = "DB_DIALECT";
-    } else if (!process.env.DB_HOST) {
+    } else if (!this.getDbHostIndividualProperty()) {
       missing = "DB_HOST";
-    } else if (!process.env.DB_PORT) {
+    } else if (!this.getDbPortIndividualProperty()) {
       missing = "DB_PORT";
-    } else if (!process.env.DB_NAME) {
+    } else if (!this.getDbNameIndividualProperty()) {
       missing = "DB_NAME";
-    } else if (!process.env.DB_USERNAME) {
+    } else if (!this.getDbUsernameIndividualProperty()) {
       missing = "DB_USERNAME";
-    } else if (
-      !Object.prototype.hasOwnProperty.call(process.env, "DB_PASSWORD")
-    ) {
+    } else if (!this.getDbPasswordIndividualProperty()) {
       missing = "DB_PASSWORD";
     }
 
+    // !Object.prototype.hasOwnProperty.call(process.env, "DB_PASSWORD")
+
     return missing;
+  }
+
+  getDbDialectIndividualProperty() {
+    return this.options.dbDialect || process.env.DB_DIALECT;
+  }
+
+  getDbHostIndividualProperty() {
+    return this.options.dbHost || process.env.DB_HOST;
+  }
+
+  getDbPortIndividualProperty() {
+    return this.options.dbPort || process.env.DB_PORT;
+  }
+
+  getDbNameIndividualProperty() {
+    return this.options.DbName || process.env.DB_NAME;
+  }
+
+  getDbUsernameIndividualProperty() {
+    return this.options.dbUsername || process.env.DB_USERNAME;
+  }
+
+  getDbPasswordIndividualProperty() {
+    return this.options.dbPassword || process.env.DB_PASSWORD;
   }
 
   async migrate() {
