@@ -124,17 +124,35 @@ The commands (those that have some option) and it's options are presented below:
 - migrations up
 ```
 --rollback / -r .......... Rolls back applied migrations in case of error (default is false)
+--dbDialect ........................ Specify the database dialect (one of: 'mysql', 'mariadb', 'postgres', 'mssql')
+--dbHost ........................... Specify the database host
+--dbPort ........................... Specify the database port
+--dbName ........................... Specify the database name
+--dbUsername ....................... Specify the database username
+--dbPassword ....................... Specify the database password
 ```
 
 - migrations down
 ```
 --times / -t ............. Specify how many times to roll back (default is 1)
 --name / -n .............. Specify the name of the migration to be rolled back (e.g. "--name create-users.js")
+--dbDialect ........................ Specify the database dialect (one of: 'mysql', 'mariadb', 'postgres', 'mssql')
+--dbHost ........................... Specify the database host
+--dbPort ........................... Specify the database port
+--dbName ........................... Specify the database name
+--dbUsername ....................... Specify the database username
+--dbPassword ....................... Specify the database password
 ```
 
 - migrations list
 ```
 --status / -s ............ Specify the status of migrations to be listed (--status pending [default] or --status executed)
+--dbDialect ........................ Specify the database dialect (one of: 'mysql', 'mariadb', 'postgres', 'mssql')
+--dbHost ........................... Specify the database host
+--dbPort ........................... Specify the database port
+--dbName ........................... Specify the database name
+--dbUsername ....................... Specify the database username
+--dbPassword ....................... Specify the database password
 ```
 
 ### Custom migrations path
