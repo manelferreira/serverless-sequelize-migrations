@@ -382,6 +382,120 @@ describe("Serverless sequelize migrations", () => {
           CONNECTION_URL: `${cliOptionsDbData.dbDialect}://${cliOptionsDbData.dbUsername}:${cliOptionsDbData.dbPassword}@${cliOptionsDbData.dbHost}:${cliOptionsDbData.dbPort}/${cliOptionsDbData.dbName}`
         });
       });
+    });
+
+    context("When some required properties are set through environment variables and others through CLI options", () => {
+      beforeEach(() => {
+        this.envDbData = {
+          DB_DIALECT: "mysql",
+          DB_HOST: "localhost",
+          DB_PORT: "3306",
+          DB_NAME: "name",
+          DB_USERNAME: "username",
+          DB_PASSWORD: "password"
+        };
+
+        this.serverless.service.provider.environment = this.envDbData;
+
+        const logFunction = sinon.spy();
+        this.serverless.cli.log = logFunction;
+      });
+
+      context ("When only dialect value is set through CLI", () => {
+        it("returns database data", () => {
+          const cliOptionsDbData = {
+            dbDialect: "cliSetDialect"
+          };
+
+          const plugin = new SlsSequelizeMigrations(this.serverless, cliOptionsDbData);
+  
+          const database = plugin.setUpDatabaseConnectionValues();
+  
+          expect(database).to.be.eql({
+            CONNECTION_URL: `${cliOptionsDbData.dbDialect}://${this.envDbData.DB_USERNAME}:${this.envDbData.DB_PASSWORD}@${this.envDbData.DB_HOST}:${this.envDbData.DB_PORT}/${this.envDbData.DB_NAME}`
+          });
+        });
+      });
+
+      context ("When only host value is set through CLI", () => {
+        it("returns database data", () => {
+          const cliOptionsDbData = {
+            dbHost: "dbHost"
+          };
+
+          const plugin = new SlsSequelizeMigrations(this.serverless, cliOptionsDbData);
+  
+          const database = plugin.setUpDatabaseConnectionValues();
+  
+          expect(database).to.be.eql({
+            CONNECTION_URL: `${this.envDbData.DB_DIALECT}://${this.envDbData.DB_USERNAME}:${this.envDbData.DB_PASSWORD}@${cliOptionsDbData.dbHost}:${this.envDbData.DB_PORT}/${this.envDbData.DB_NAME}`
+          });
+        });
+      });
+
+      context ("When only port value is set through CLI", () => {
+        it("returns database data", () => {
+          const cliOptionsDbData = {
+            dbPort: "cliSetPort"
+          };
+
+          const plugin = new SlsSequelizeMigrations(this.serverless, cliOptionsDbData);
+  
+          const database = plugin.setUpDatabaseConnectionValues();
+  
+          expect(database).to.be.eql({
+            CONNECTION_URL: `${this.envDbData.DB_DIALECT}://${this.envDbData.DB_USERNAME}:${this.envDbData.DB_PASSWORD}@${this.envDbData.DB_HOST}:${cliOptionsDbData.dbPort}/${this.envDbData.DB_NAME}`
+          });
+        });
+      });
+
+      context ("When only name value is set through CLI", () => {
+        it("returns database data", () => {
+          const cliOptionsDbData = {
+            dbName: "cliSetName"
+          };
+
+          const plugin = new SlsSequelizeMigrations(this.serverless, cliOptionsDbData);
+  
+          const database = plugin.setUpDatabaseConnectionValues();
+  
+          expect(database).to.be.eql({
+            CONNECTION_URL: `${this.envDbData.DB_DIALECT}://${this.envDbData.DB_USERNAME}:${this.envDbData.DB_PASSWORD}@${this.envDbData.DB_HOST}:${this.envDbData.DB_PORT}/${cliOptionsDbData.dbName}`
+          });
+        });
+      });
+
+      context ("When only username value is set through CLI", () => {
+        it("returns database data", () => {
+          const cliOptionsDbData = {
+            dbUsername: "cliSetUsername"
+          };
+
+          const plugin = new SlsSequelizeMigrations(this.serverless, cliOptionsDbData);
+  
+          const database = plugin.setUpDatabaseConnectionValues();
+  
+          expect(database).to.be.eql({
+            CONNECTION_URL: `${this.envDbData.DB_DIALECT}://${cliOptionsDbData.dbUsername}:${this.envDbData.DB_PASSWORD}@${this.envDbData.DB_HOST}:${this.envDbData.DB_PORT}/${this.envDbData.DB_NAME}`
+          });
+        });
+      });
+
+      context ("When only password value is set through CLI", () => {
+        it("returns database data", () => {
+          const cliOptionsDbData = {
+            dbPassword: "cliSetPassword"
+          };
+
+          const plugin = new SlsSequelizeMigrations(this.serverless, cliOptionsDbData);
+  
+          const database = plugin.setUpDatabaseConnectionValues();
+  
+          expect(database).to.be.eql({
+            CONNECTION_URL: `${this.envDbData.DB_DIALECT}://${this.envDbData.DB_USERNAME}:${cliOptionsDbData.dbPassword}@${this.envDbData.DB_HOST}:${this.envDbData.DB_PORT}/${this.envDbData.DB_NAME}`
+          });
+        });
+      });
     })
   });
 
