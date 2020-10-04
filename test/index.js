@@ -3,7 +3,7 @@ const sinon = require("sinon");
 const SlsSequelizeMigrations = require("../index");
 const MigrationsHandler = require("../handlers/migrationsHandler");
 const SequelizeCliHandler = require("../handlers/sequelizeCliHandler");
-const DatabaseConnectionUtils = require("../lib/databaseConnectionUtils");
+const DatabaseConnectionUrlBuilder = require("../lib/databaseConnectionUrlBuilder");
 
 describe("Serverless sequelize migrations", () => {
   describe("When an instance is created", () => {
@@ -54,7 +54,7 @@ describe("Serverless sequelize migrations", () => {
     context("creates instance with success", () => {
       it("creates simple instance", () => {
         const setupDatabaseStub = sinon
-          .stub(DatabaseConnectionUtils.prototype, "setUpDatabaseConnectionValues")
+          .stub(DatabaseConnectionUrlBuilder.prototype, "build")
           .returns("some database connection values");
 
         const migrationsHandlerInitializeStub = sinon.stub(
@@ -67,7 +67,7 @@ describe("Serverless sequelize migrations", () => {
         const migrationsHandler = plugin.setUpMigrationsHandler();
 
         sinon.assert.calledOnce(
-          DatabaseConnectionUtils.prototype.setUpDatabaseConnectionValues
+          DatabaseConnectionUrlBuilder.prototype.build
         );
         sinon.assert.calledOnce(MigrationsHandler.prototype.initialize);
 
@@ -90,7 +90,7 @@ describe("Serverless sequelize migrations", () => {
         };
 
         const setupDatabaseStub = sinon
-          .stub(DatabaseConnectionUtils.prototype, "setUpDatabaseConnectionValues")
+          .stub(DatabaseConnectionUrlBuilder.prototype, "build")
           .returns("some database connection value");
 
         const migrationsHandlerInitializeStub = sinon.stub(
@@ -103,7 +103,7 @@ describe("Serverless sequelize migrations", () => {
         const migrationsHandler = plugin.setUpMigrationsHandler();
 
         sinon.assert.calledOnce(
-          DatabaseConnectionUtils.prototype.setUpDatabaseConnectionValues
+          DatabaseConnectionUrlBuilder.prototype.build
         );
         sinon.assert.calledOnce(MigrationsHandler.prototype.initialize);
 
@@ -128,7 +128,7 @@ describe("Serverless sequelize migrations", () => {
         };
 
         const setupDatabaseStub = sinon
-          .stub(DatabaseConnectionUtils.prototype, "setUpDatabaseConnectionValues")
+          .stub(DatabaseConnectionUrlBuilder.prototype, "build")
           .returns("some database connection value");
 
         const migrationsHandlerInitializeStub = sinon.stub(
@@ -145,7 +145,7 @@ describe("Serverless sequelize migrations", () => {
         const migrationsHandler = plugin.setUpMigrationsHandler();
 
         sinon.assert.calledOnce(
-          DatabaseConnectionUtils.prototype.setUpDatabaseConnectionValues
+          DatabaseConnectionUrlBuilder.prototype.build
         );
         sinon.assert.calledOnce(MigrationsHandler.prototype.initialize);
 

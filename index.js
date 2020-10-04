@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const utils = require("./lib/utils");
-const DatabaseConnectionUtils = require("./lib/databaseConnectionUtils");
+const DatabaseConnectionUrlBuilder = require("./lib/databaseConnectionUrlBuilder");
 const MigrationsHandler = require("./handlers/migrationsHandler");
 const SequelizeCliHandler = require("./handlers/sequelizeCliHandler");
 
@@ -105,8 +105,8 @@ class SequelizeMigrations {
   }
 
   setUpMigrationsHandler() {
-    const databaseConnectionUtils = new DatabaseConnectionUtils(this.serverless, this.options);
-    const database = databaseConnectionUtils.setUpDatabaseConnectionValues();
+    const databaseConnectionUrlBuilder = new DatabaseConnectionUrlBuilder(this.serverless, this.options);
+    const database = databaseConnectionUrlBuilder.build();
 
     const migrationsHandler = new MigrationsHandler(
       this.serverless,

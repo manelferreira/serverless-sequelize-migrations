@@ -1,8 +1,8 @@
 const { expect } = require("chai");
 const sinon = require("sinon");
-const DatabaseConnectionUtils = require("../lib/databaseConnectionUtils");
+const DatabaseConnectionUrlBuilder = require("../lib/databaseConnectionUrlBuilder");
 
-describe("DatabaseConnectionUtils", () => {
+describe("DatabaseConnectionUrlBuilder", () => {
   describe("Set up database values", () => {
     before(() => {
       this.serverless = {
@@ -67,9 +67,9 @@ describe("DatabaseConnectionUtils", () => {
         const logFunction = sinon.spy();
         this.serverless.cli.log = logFunction;
 
-        const plugin = new DatabaseConnectionUtils(this.serverless, {});
+        const builder = new DatabaseConnectionUrlBuilder(this.serverless, {});
 
-        plugin.setUpDatabaseConnectionValues();
+        builder.build();
         sinon.assert.calledWith(
           logFunction,
           "Missing DB_DIALECT in the environment variables"
@@ -88,9 +88,9 @@ describe("DatabaseConnectionUtils", () => {
         const logFunction = sinon.spy();
         this.serverless.cli.log = logFunction;
 
-        const plugin = new DatabaseConnectionUtils(this.serverless, {});
+        const builder = new DatabaseConnectionUrlBuilder(this.serverless, {});
 
-        plugin.setUpDatabaseConnectionValues();
+        builder.build();
         sinon.assert.calledWith(
           logFunction,
           "Missing DB_HOST in the environment variables"
@@ -109,9 +109,9 @@ describe("DatabaseConnectionUtils", () => {
         const logFunction = sinon.spy();
         this.serverless.cli.log = logFunction;
 
-        const plugin = new DatabaseConnectionUtils(this.serverless, {});
+        const builder = new DatabaseConnectionUrlBuilder(this.serverless, {});
 
-        plugin.setUpDatabaseConnectionValues();
+        builder.build();
         sinon.assert.calledWith(
           logFunction,
           "Missing DB_PORT in the environment variables"
@@ -130,9 +130,9 @@ describe("DatabaseConnectionUtils", () => {
         const logFunction = sinon.spy();
         this.serverless.cli.log = logFunction;
 
-        const plugin = new DatabaseConnectionUtils(this.serverless, {});
+        const builder = new DatabaseConnectionUrlBuilder(this.serverless, {});
 
-        plugin.setUpDatabaseConnectionValues();
+        builder.build();
         sinon.assert.calledWith(
           logFunction,
           "Missing DB_NAME in the environment variables"
@@ -151,9 +151,9 @@ describe("DatabaseConnectionUtils", () => {
         const logFunction = sinon.spy();
         this.serverless.cli.log = logFunction;
 
-        const plugin = new DatabaseConnectionUtils(this.serverless, {});
+        const builder = new DatabaseConnectionUrlBuilder(this.serverless, {});
 
-        plugin.setUpDatabaseConnectionValues();
+        builder.build();
         sinon.assert.calledWith(
           logFunction,
           "Missing DB_USERNAME in the environment variables"
@@ -172,9 +172,9 @@ describe("DatabaseConnectionUtils", () => {
         const logFunction = sinon.spy();
         this.serverless.cli.log = logFunction;
 
-        const plugin = new DatabaseConnectionUtils(this.serverless, {});
+        const builder = new DatabaseConnectionUrlBuilder(this.serverless, {});
 
-        plugin.setUpDatabaseConnectionValues();
+        builder.build();
         sinon.assert.calledWith(
           logFunction,
           "Missing DB_PASSWORD in the environment variables"
@@ -190,9 +190,9 @@ describe("DatabaseConnectionUtils", () => {
         const logFunction = sinon.spy();
         this.serverless.cli.log = logFunction;
 
-        const plugin = new DatabaseConnectionUtils(this.serverless, {});
+        const builder = new DatabaseConnectionUrlBuilder(this.serverless, {});
 
-        plugin.setUpDatabaseConnectionValues();
+        builder.build();
         sinon.assert.calledWith(
           logFunction,
           `Database connection settings are invalid or results in malformed connection URL: ${
@@ -220,9 +220,9 @@ describe("DatabaseConnectionUtils", () => {
             const logFunction = sinon.spy();
             this.serverless.cli.log = logFunction;
 
-            const plugin = new DatabaseConnectionUtils(this.serverless, {});
+            const builder = new DatabaseConnectionUrlBuilder(this.serverless, {});
 
-            const database = plugin.setUpDatabaseConnectionValues();
+            const database = builder.build();
 
             expect(database).to.be.eql({
               CONNECTION_URL: `${envDbData.DB_DIALECT}://${envDbData.DB_USERNAME}:${envDbData.DB_PASSWORD}@${envDbData.DB_HOST}:${envDbData.DB_PORT}/${envDbData.DB_NAME}`
@@ -245,9 +245,9 @@ describe("DatabaseConnectionUtils", () => {
             const logFunction = sinon.spy();
             this.serverless.cli.log = logFunction;
 
-            const plugin = new DatabaseConnectionUtils(this.serverless, {});
+            const builder = new DatabaseConnectionUrlBuilder(this.serverless, {});
 
-            const database = plugin.setUpDatabaseConnectionValues();
+            const database = builder.build();
 
             expect(database).to.be.eql({
               CONNECTION_URL: `${envDbData.DB_DIALECT}://${envDbData.DB_USERNAME}:${envDbData.DB_PASSWORD}@${envDbData.DB_HOST}:${envDbData.DB_PORT}/${envDbData.DB_NAME}`
@@ -270,9 +270,9 @@ describe("DatabaseConnectionUtils", () => {
         const logFunction = sinon.spy();
         this.serverless.cli.log = logFunction;
 
-        const plugin = new DatabaseConnectionUtils(this.serverless, {});
+        const builder = new DatabaseConnectionUrlBuilder(this.serverless, {});
 
-        const database = plugin.setUpDatabaseConnectionValues();
+        const database = builder.build();
 
         expect(database).to.be.eql({
           CONNECTION_URL: `${envDbData.DB_DIALECT}://${envDbData.DB_USERNAME}:${envDbData.DB_PASSWORD}@${envDbData.DB_HOST}:${envDbData.DB_PORT}/${envDbData.DB_NAME}`
@@ -296,9 +296,9 @@ describe("DatabaseConnectionUtils", () => {
             const logFunction = sinon.spy();
             this.serverless.cli.log = logFunction;
 
-            const plugin = new DatabaseConnectionUtils(this.serverless, cliOptionsDbData);
+            const builder = new DatabaseConnectionUrlBuilder(this.serverless, cliOptionsDbData);
 
-            const database = plugin.setUpDatabaseConnectionValues();
+            const database = builder.build();
 
             expect(database).to.be.eql({
               CONNECTION_URL: `${cliOptionsDbData.dbDialect}://${cliOptionsDbData.dbUsername}:@${cliOptionsDbData.dbHost}:${cliOptionsDbData.dbPort}/${cliOptionsDbData.dbName}`
@@ -320,9 +320,9 @@ describe("DatabaseConnectionUtils", () => {
             const logFunction = sinon.spy();
             this.serverless.cli.log = logFunction;
 
-            const plugin = new DatabaseConnectionUtils(this.serverless, cliOptionsDbData);
+            const builder = new DatabaseConnectionUrlBuilder(this.serverless, cliOptionsDbData);
 
-            const database = plugin.setUpDatabaseConnectionValues();
+            const database = builder.build();
 
             expect(database).to.be.eql({
               CONNECTION_URL: `${cliOptionsDbData.dbDialect}://${cliOptionsDbData.dbUsername}:${cliOptionsDbData.dbPassword}@${cliOptionsDbData.dbHost}:${cliOptionsDbData.dbPort}/${cliOptionsDbData.dbName}`
@@ -344,9 +344,9 @@ describe("DatabaseConnectionUtils", () => {
         const logFunction = sinon.spy();
         this.serverless.cli.log = logFunction;
 
-        const plugin = new DatabaseConnectionUtils(this.serverless, cliOptionsDbData);
+        const builder = new DatabaseConnectionUrlBuilder(this.serverless, cliOptionsDbData);
 
-        const database = plugin.setUpDatabaseConnectionValues();
+        const database = builder.build();
 
         expect(database).to.be.eql({
           CONNECTION_URL: `${cliOptionsDbData.dbDialect}://${cliOptionsDbData.dbUsername}:${cliOptionsDbData.dbPassword}@${cliOptionsDbData.dbHost}:${cliOptionsDbData.dbPort}/${cliOptionsDbData.dbName}`
@@ -377,9 +377,9 @@ describe("DatabaseConnectionUtils", () => {
             dbDialect: "cliSetDialect"
           };
 
-          const plugin = new DatabaseConnectionUtils(this.serverless, cliOptionsDbData);
+          const builder = new DatabaseConnectionUrlBuilder(this.serverless, cliOptionsDbData);
   
-          const database = plugin.setUpDatabaseConnectionValues();
+          const database = builder.build();
   
           expect(database).to.be.eql({
             CONNECTION_URL: `${cliOptionsDbData.dbDialect}://${this.envDbData.DB_USERNAME}:${this.envDbData.DB_PASSWORD}@${this.envDbData.DB_HOST}:${this.envDbData.DB_PORT}/${this.envDbData.DB_NAME}`
@@ -393,9 +393,9 @@ describe("DatabaseConnectionUtils", () => {
             dbHost: "dbHost"
           };
 
-          const plugin = new DatabaseConnectionUtils(this.serverless, cliOptionsDbData);
+          const builder = new DatabaseConnectionUrlBuilder(this.serverless, cliOptionsDbData);
   
-          const database = plugin.setUpDatabaseConnectionValues();
+          const database = builder.build();
   
           expect(database).to.be.eql({
             CONNECTION_URL: `${this.envDbData.DB_DIALECT}://${this.envDbData.DB_USERNAME}:${this.envDbData.DB_PASSWORD}@${cliOptionsDbData.dbHost}:${this.envDbData.DB_PORT}/${this.envDbData.DB_NAME}`
@@ -409,9 +409,9 @@ describe("DatabaseConnectionUtils", () => {
             dbPort: "cliSetPort"
           };
 
-          const plugin = new DatabaseConnectionUtils(this.serverless, cliOptionsDbData);
+          const builder = new DatabaseConnectionUrlBuilder(this.serverless, cliOptionsDbData);
   
-          const database = plugin.setUpDatabaseConnectionValues();
+          const database = builder.build();
   
           expect(database).to.be.eql({
             CONNECTION_URL: `${this.envDbData.DB_DIALECT}://${this.envDbData.DB_USERNAME}:${this.envDbData.DB_PASSWORD}@${this.envDbData.DB_HOST}:${cliOptionsDbData.dbPort}/${this.envDbData.DB_NAME}`
@@ -425,9 +425,9 @@ describe("DatabaseConnectionUtils", () => {
             dbName: "cliSetName"
           };
 
-          const plugin = new DatabaseConnectionUtils(this.serverless, cliOptionsDbData);
+          const builder = new DatabaseConnectionUrlBuilder(this.serverless, cliOptionsDbData);
   
-          const database = plugin.setUpDatabaseConnectionValues();
+          const database = builder.build();
   
           expect(database).to.be.eql({
             CONNECTION_URL: `${this.envDbData.DB_DIALECT}://${this.envDbData.DB_USERNAME}:${this.envDbData.DB_PASSWORD}@${this.envDbData.DB_HOST}:${this.envDbData.DB_PORT}/${cliOptionsDbData.dbName}`
@@ -441,9 +441,9 @@ describe("DatabaseConnectionUtils", () => {
             dbUsername: "cliSetUsername"
           };
 
-          const plugin = new DatabaseConnectionUtils(this.serverless, cliOptionsDbData);
+          const builder = new DatabaseConnectionUrlBuilder(this.serverless, cliOptionsDbData);
   
-          const database = plugin.setUpDatabaseConnectionValues();
+          const database = builder.build();
   
           expect(database).to.be.eql({
             CONNECTION_URL: `${this.envDbData.DB_DIALECT}://${cliOptionsDbData.dbUsername}:${this.envDbData.DB_PASSWORD}@${this.envDbData.DB_HOST}:${this.envDbData.DB_PORT}/${this.envDbData.DB_NAME}`
@@ -457,9 +457,9 @@ describe("DatabaseConnectionUtils", () => {
             dbPassword: "cliSetPassword"
           };
 
-          const plugin = new DatabaseConnectionUtils(this.serverless, cliOptionsDbData);
+          const builder = new DatabaseConnectionUrlBuilder(this.serverless, cliOptionsDbData);
   
-          const database = plugin.setUpDatabaseConnectionValues();
+          const database = builder.build();
   
           expect(database).to.be.eql({
             CONNECTION_URL: `${this.envDbData.DB_DIALECT}://${this.envDbData.DB_USERNAME}:${cliOptionsDbData.dbPassword}@${this.envDbData.DB_HOST}:${this.envDbData.DB_PORT}/${this.envDbData.DB_NAME}`
