@@ -3,6 +3,7 @@ const sinon = require("sinon");
 const SlsSequelizeMigrations = require("../index");
 const MigrationsHandler = require("../handlers/migrationsHandler");
 const SequelizeCliHandler = require("../handlers/sequelizeCliHandler");
+const DatabaseConnectionUrlBuilder = require("../lib/databaseConnectionUrlBuilder");
 
 describe("Serverless sequelize migrations", () => {
   describe("When an instance is created", () => {
@@ -33,259 +34,6 @@ describe("Serverless sequelize migrations", () => {
     });
   });
 
-  describe("Set up database values", () => {
-    before(() => {
-      this.serverless = {
-        service: {
-          provider: {
-            environment: {}
-          }
-        },
-        cli: {}
-      };
-    });
-
-    beforeEach(() => {
-      this.processStub = sinon.stub(process, "exit");
-    });
-
-    afterEach(() => {
-      delete process.env.DB_DIALECT;
-      delete process.env.DB_HOST;
-      delete process.env.DB_PORT;
-      delete process.env.DB_NAME;
-      delete process.env.DB_USERNAME;
-      delete process.env.DB_PASSWORD;
-      delete process.env.DB_CONNECTION_URL;
-      this.processStub.restore();
-    });
-
-    context("when some required property is missing", () => {
-      it("fail if DB_DIALECT is missing", () => {
-        this.serverless.service.provider.environment = {
-          DB_HOST: "localhost",
-          DB_PORT: "3306",
-          DB_NAME: "name",
-          DB_USERNAME: "username",
-          DB_PASSWORD: "password"
-        };
-        const logFunction = sinon.spy();
-        this.serverless.cli.log = logFunction;
-
-        const plugin = new SlsSequelizeMigrations(this.serverless, {});
-
-        plugin.setUpDatabaseConnectionValues();
-        sinon.assert.calledWith(
-          logFunction,
-          "Missing DB_DIALECT in the environment variables"
-        );
-        sinon.assert.calledWith(process.exit, 1);
-      });
-
-      it("fail if DB_HOST is missing", () => {
-        this.serverless.service.provider.environment = {
-          DB_DIALECT: "mysql",
-          DB_PORT: "3306",
-          DB_NAME: "name",
-          DB_USERNAME: "username",
-          DB_PASSWORD: "password"
-        };
-        const logFunction = sinon.spy();
-        this.serverless.cli.log = logFunction;
-
-        const plugin = new SlsSequelizeMigrations(this.serverless, {});
-
-        plugin.setUpDatabaseConnectionValues();
-        sinon.assert.calledWith(
-          logFunction,
-          "Missing DB_HOST in the environment variables"
-        );
-        sinon.assert.calledWith(process.exit, 1);
-      });
-
-      it("fail if DB_PORT is missing", () => {
-        this.serverless.service.provider.environment = {
-          DB_DIALECT: "mysql",
-          DB_HOST: "localhost",
-          DB_NAME: "name",
-          DB_USERNAME: "username",
-          DB_PASSWORD: "password"
-        };
-        const logFunction = sinon.spy();
-        this.serverless.cli.log = logFunction;
-
-        const plugin = new SlsSequelizeMigrations(this.serverless, {});
-
-        plugin.setUpDatabaseConnectionValues();
-        sinon.assert.calledWith(
-          logFunction,
-          "Missing DB_PORT in the environment variables"
-        );
-        sinon.assert.calledWith(process.exit, 1);
-      });
-
-      it("fail if DB_NAME is missing", () => {
-        this.serverless.service.provider.environment = {
-          DB_DIALECT: "mysql",
-          DB_HOST: "localhost",
-          DB_PORT: "3306",
-          DB_USERNAME: "username",
-          DB_PASSWORD: "password"
-        };
-        const logFunction = sinon.spy();
-        this.serverless.cli.log = logFunction;
-
-        const plugin = new SlsSequelizeMigrations(this.serverless, {});
-
-        plugin.setUpDatabaseConnectionValues();
-        sinon.assert.calledWith(
-          logFunction,
-          "Missing DB_NAME in the environment variables"
-        );
-        sinon.assert.calledWith(process.exit, 1);
-      });
-
-      it("fail if DB_USERNAME is missing", () => {
-        this.serverless.service.provider.environment = {
-          DB_DIALECT: "mysql",
-          DB_HOST: "localhost",
-          DB_PORT: "3306",
-          DB_NAME: "name",
-          DB_PASSWORD: "password"
-        };
-        const logFunction = sinon.spy();
-        this.serverless.cli.log = logFunction;
-
-        const plugin = new SlsSequelizeMigrations(this.serverless, {});
-
-        plugin.setUpDatabaseConnectionValues();
-        sinon.assert.calledWith(
-          logFunction,
-          "Missing DB_USERNAME in the environment variables"
-        );
-        sinon.assert.calledWith(process.exit, 1);
-      });
-
-      it("fail if DB_PASSWORD is missing", () => {
-        this.serverless.service.provider.environment = {
-          DB_DIALECT: "mysql",
-          DB_HOST: "localhost",
-          DB_PORT: "3306",
-          DB_NAME: "name",
-          DB_USERNAME: "username"
-        };
-        const logFunction = sinon.spy();
-        this.serverless.cli.log = logFunction;
-
-        const plugin = new SlsSequelizeMigrations(this.serverless, {});
-
-        plugin.setUpDatabaseConnectionValues();
-        sinon.assert.calledWith(
-          logFunction,
-          "Missing DB_PASSWORD in the environment variables"
-        );
-        sinon.assert.calledWith(process.exit, 1);
-      });
-
-      it("fail if DB_CONNECTION_URL is invalid", () => {
-        const DB_CONNECTION_URL = "invalid_dialect://username:password@localhost:3306/name";
-        this.serverless.service.provider.environment = {
-          DB_CONNECTION_URL: DB_CONNECTION_URL
-        };
-        const logFunction = sinon.spy();
-        this.serverless.cli.log = logFunction;
-
-        const plugin = new SlsSequelizeMigrations(this.serverless, {});
-
-        plugin.setUpDatabaseConnectionValues();
-        sinon.assert.calledWith(
-          logFunction,
-          `Database connection settings are invalid or results in malformed connection URL: ${
-            DB_CONNECTION_URL
-          }`
-        );
-        sinon.assert.calledWith(process.exit, 1);
-      });
-    });
-
-    context("When all required properties are set", () => {
-      context("When DB_PASSWORD is falsy", () => {
-        context("When value is set as null", () => {
-          it("returns database data", () => {
-            const envDbData = {
-              DB_DIALECT: "mysql",
-              DB_HOST: "localhost",
-              DB_PORT: "3306",
-              DB_NAME: "name",
-              DB_USERNAME: "username",
-              DB_PASSWORD: null
-            };
-            this.serverless.service.provider.environment = envDbData;
-
-            const logFunction = sinon.spy();
-            this.serverless.cli.log = logFunction;
-
-            const plugin = new SlsSequelizeMigrations(this.serverless, {});
-
-            const database = plugin.setUpDatabaseConnectionValues();
-
-            expect(database).to.be.eql({
-              CONNECTION_URL: `${envDbData.DB_DIALECT}://${envDbData.DB_USERNAME}:${envDbData.DB_PASSWORD}@${envDbData.DB_HOST}:${envDbData.DB_PORT}/${envDbData.DB_NAME}`
-            });
-          });
-        });
-
-        context("When value is set as an empty string", () => {
-          it("returns database data", () => {
-            const envDbData = {
-              DB_DIALECT: "mysql",
-              DB_HOST: "localhost",
-              DB_PORT: "3306",
-              DB_NAME: "name",
-              DB_USERNAME: "username",
-              DB_PASSWORD: ""
-            };
-            this.serverless.service.provider.environment = envDbData;
-
-            const logFunction = sinon.spy();
-            this.serverless.cli.log = logFunction;
-
-            const plugin = new SlsSequelizeMigrations(this.serverless, {});
-
-            const database = plugin.setUpDatabaseConnectionValues();
-
-            expect(database).to.be.eql({
-              CONNECTION_URL: `${envDbData.DB_DIALECT}://${envDbData.DB_USERNAME}:${envDbData.DB_PASSWORD}@${envDbData.DB_HOST}:${envDbData.DB_PORT}/${envDbData.DB_NAME}`
-            });
-          });
-        });
-      });
-
-      it("returns database data", () => {
-        const envDbData = {
-          DB_DIALECT: "mysql",
-          DB_HOST: "localhost",
-          DB_PORT: "3306",
-          DB_NAME: "name",
-          DB_USERNAME: "username",
-          DB_PASSWORD: "password"
-        };
-        this.serverless.service.provider.environment = envDbData;
-
-        const logFunction = sinon.spy();
-        this.serverless.cli.log = logFunction;
-
-        const plugin = new SlsSequelizeMigrations(this.serverless, {});
-
-        const database = plugin.setUpDatabaseConnectionValues();
-
-        expect(database).to.be.eql({
-          CONNECTION_URL: `${envDbData.DB_DIALECT}://${envDbData.DB_USERNAME}:${envDbData.DB_PASSWORD}@${envDbData.DB_HOST}:${envDbData.DB_PORT}/${envDbData.DB_NAME}`
-        });
-      });
-    });
-  });
-
   describe("Set up migrations handler", () => {
     beforeEach(() => {
       this.serverless = {
@@ -306,7 +54,7 @@ describe("Serverless sequelize migrations", () => {
     context("creates instance with success", () => {
       it("creates simple instance", () => {
         const setupDatabaseStub = sinon
-          .stub(SlsSequelizeMigrations.prototype, "setUpDatabaseConnectionValues")
+          .stub(DatabaseConnectionUrlBuilder.prototype, "build")
           .returns("some database connection values");
 
         const migrationsHandlerInitializeStub = sinon.stub(
@@ -319,7 +67,7 @@ describe("Serverless sequelize migrations", () => {
         const migrationsHandler = plugin.setUpMigrationsHandler();
 
         sinon.assert.calledOnce(
-          SlsSequelizeMigrations.prototype.setUpDatabaseConnectionValues
+          DatabaseConnectionUrlBuilder.prototype.build
         );
         sinon.assert.calledOnce(MigrationsHandler.prototype.initialize);
 
@@ -342,7 +90,7 @@ describe("Serverless sequelize migrations", () => {
         };
 
         const setupDatabaseStub = sinon
-          .stub(SlsSequelizeMigrations.prototype, "setUpDatabaseConnectionValues")
+          .stub(DatabaseConnectionUrlBuilder.prototype, "build")
           .returns("some database connection value");
 
         const migrationsHandlerInitializeStub = sinon.stub(
@@ -355,7 +103,7 @@ describe("Serverless sequelize migrations", () => {
         const migrationsHandler = plugin.setUpMigrationsHandler();
 
         sinon.assert.calledOnce(
-          SlsSequelizeMigrations.prototype.setUpDatabaseConnectionValues
+          DatabaseConnectionUrlBuilder.prototype.build
         );
         sinon.assert.calledOnce(MigrationsHandler.prototype.initialize);
 
@@ -380,7 +128,7 @@ describe("Serverless sequelize migrations", () => {
         };
 
         const setupDatabaseStub = sinon
-          .stub(SlsSequelizeMigrations.prototype, "setUpDatabaseConnectionValues")
+          .stub(DatabaseConnectionUrlBuilder.prototype, "build")
           .returns("some database connection value");
 
         const migrationsHandlerInitializeStub = sinon.stub(
@@ -397,7 +145,7 @@ describe("Serverless sequelize migrations", () => {
         const migrationsHandler = plugin.setUpMigrationsHandler();
 
         sinon.assert.calledOnce(
-          SlsSequelizeMigrations.prototype.setUpDatabaseConnectionValues
+          DatabaseConnectionUrlBuilder.prototype.build
         );
         sinon.assert.calledOnce(MigrationsHandler.prototype.initialize);
 

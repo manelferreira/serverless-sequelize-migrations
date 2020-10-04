@@ -2,14 +2,16 @@ const { expect } = require("chai");
 const utils = require("../lib/utils");
 
 describe("utils", () => {
-  describe("Copy project environment variables on process.env", () => {
+  describe("Copy serverless project environment variables on process.env", () => {
     it("should have undefined values", () => {
       const serverless = {
         service: {
           provider: {}
         }
       };
-      utils.setEnvironment(serverless);
+      
+      utils.copyServerlessEnvironmentValuesToProcessEnvironment(serverless);
+      
       expect(process.env.PROVIDER_VAR).to.be.equal(undefined);
       expect(process.env.FUNCTION_VAR).to.be.equal(undefined);
     });
@@ -26,7 +28,9 @@ describe("utils", () => {
           functions: {}
         }
       };
-      utils.setEnvironment(serverless);
+
+      utils.copyServerlessEnvironmentValuesToProcessEnvironment(serverless);
+
       expect(process.env.PROVIDER_VAR).to.be.equal("provider variable");
       expect(process.env.PROVIDER_VAR_2).to.be.equal("1");
     });

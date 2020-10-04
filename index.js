@@ -1,5 +1,6 @@
 const _ = require("lodash");
 const utils = require("./lib/utils");
+const DatabaseConnectionUrlBuilder = require("./lib/databaseConnectionUrlBuilder");
 const MigrationsHandler = require("./handlers/migrationsHandler");
 const SequelizeCliHandler = require("./handlers/sequelizeCliHandler");
 
@@ -7,6 +8,33 @@ class SequelizeMigrations {
   constructor(serverless, options) {
     this.serverless = serverless;
     this.options = options;
+
+    const dbConnectionOptions = {
+      dbDialect: {
+        usage: "Specify the database dialect (one of: 'mysql', 'mariadb', 'postgres', 'mssql')",
+        default: ''
+      },
+      dbHost: {
+        usage: "Specify the database host",
+        default: ''
+      },
+      dbPort: {
+        usage: "Specify the database port",
+        default: ''
+      },
+      dbName: {
+        usage: "Specify the database name",
+        default: ''
+      },
+      dbUsername: {
+        usage: "Specify the database username",
+        default: ''
+      },
+      dbPassword: {
+        usage: "Specify the database password",
+        default: ''
+      }
+    }
 
     this.commands = {
       migrations: {
@@ -44,7 +72,8 @@ class SequelizeMigrations {
                   "Rolls back applied migrations in case of error (default is false)",
                 shortcut: "r",
                 default: false
-              }
+              },
+              ...dbConnectionOptions
             }
           },
           down: {
@@ -60,12 +89,16 @@ class SequelizeMigrations {
                 usage:
                   'Specify the name of the migration to be rolled back (e.g. "--name create-users.js")',
                 shortcut: "n"
-              }
+              },
+              ...dbConnectionOptions
             }
           },
           reset: {
             usage: "Rolls back all migrations",
-            lifecycleEvents: ["run"]
+            lifecycleEvents: ["run"],
+            options: {
+              ...dbConnectionOptions
+            }
           },
           list: {
             usage: "Shows a list of migrations",
@@ -76,7 +109,8 @@ class SequelizeMigrations {
                   "Specify the status of migrations to be listed (--status pending [default] or --status executed)",
                 shortcut: "s",
                 default: "pending"
-              }
+              },
+              ...dbConnectionOptions
             }
           }
         }
@@ -104,7 +138,8 @@ class SequelizeMigrations {
   }
 
   setUpMigrationsHandler() {
-    const database = this.setUpDatabaseConnectionValues();
+    const databaseConnectionUrlBuilder = new DatabaseConnectionUrlBuilder(this.serverless, this.options);
+    const database = databaseConnectionUrlBuilder.build();
 
     const migrationsHandler = new MigrationsHandler(
       this.serverless,
@@ -116,75 +151,6 @@ class SequelizeMigrations {
     migrationsHandler.initialize();
 
     return migrationsHandler;
-  }
-
-  setUpDatabaseConnectionValues() {
-    utils.setEnvironment(this.serverless);
-
-    let connectionUrl = process.env.DB_CONNECTION_URL;
-
-    if (!connectionUrl) {
-      connectionUrl = this.buildDatabaseConnectionUrlFromIndividualProperties();
-    }
-
-    if (!utils.isDatabaseConnectionUrlValid(connectionUrl)) {
-      this.serverless.cli.log(
-        `Database connection settings are invalid or results in malformed connection URL: ${connectionUrl}`
-      );
-      process.exit(1);
-    }
-
-    return {
-      CONNECTION_URL: connectionUrl
-    };
-  }
-
-  buildDatabaseConnectionUrlFromIndividualProperties() {
-    let missingProperty = this
-      .checkForMissingDatabaseConnectionIndividualProperties();
-
-    if (missingProperty) {
-      this.serverless.cli.log(`Missing ${missingProperty} in the environment variables`);
-      process.exit(1);
-    }
-
-    const connectionProperties = {
-      DIALECT: process.env.DB_DIALECT,
-      HOST: process.env.DB_HOST,
-      PORT: process.env.DB_PORT,
-      NAME: process.env.DB_NAME,
-      USERNAME: process.env.DB_USERNAME,
-      PASSWORD: process.env.DB_PASSWORD
-    };
-
-    return `${connectionProperties.DIALECT}`
-      + `://${connectionProperties.USERNAME}`
-      + `:${connectionProperties.PASSWORD}`
-      + `@${connectionProperties.HOST}`
-      + `:${connectionProperties.PORT}`
-      + `/${connectionProperties.NAME}`;
-  }
-
-  checkForMissingDatabaseConnectionIndividualProperties() {
-    let missing = false;
-
-    if (!process.env.DB_DIALECT) {
-      missing = "DB_DIALECT";
-    } else if (!process.env.DB_HOST) {
-      missing = "DB_HOST";
-    } else if (!process.env.DB_PORT) {
-      missing = "DB_PORT";
-    } else if (!process.env.DB_NAME) {
-      missing = "DB_NAME";
-    } else if (!process.env.DB_USERNAME) {
-      missing = "DB_USERNAME";
-    } else if (
-      !Object.prototype.hasOwnProperty.call(process.env, "DB_PASSWORD")
-    ) {
-      missing = "DB_PASSWORD";
-    }
-
-    return missing;
   }
 
   async migrate() {
