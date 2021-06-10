@@ -66,8 +66,16 @@ module.exports = class MigrationsHandler {
             console.log(`=> ${migration.file}`);
           });
         })
-        .catch(async () => {
-          this.serverless.cli.log("Error while applying migrations");
+        .catch(async (err) => {
+          this.serverless.cli.log("Error while applying migrations: " + err);
+          if (err.parent) {
+            let message = '';
+            const keys = ['sql', 'details', 'parameters'];
+            keys.forEach(k => {
+              if (err.parent[k]) message += `    ${k}: ${err.parent[k]}`;
+            });
+            this.serverless.cli.log(message || err.parent.toString());
+          }
           this.serverless.cli.log("Looking for migration that has problems...");
 
           // get all executed migrations
