@@ -12,27 +12,33 @@ class SequelizeMigrations {
     const dbConnectionOptions = {
       dbDialect: {
         usage: "Specify the database dialect (one of: 'mysql', 'mariadb', 'postgres', 'mssql')",
-        default: ''
+        default: '',
+        type: 'string'
       },
       dbHost: {
         usage: "Specify the database host",
-        default: ''
+        default: '',
+        type: 'string'
       },
       dbPort: {
         usage: "Specify the database port",
-        default: ''
+        default: '',
+        type: 'string'
       },
       dbName: {
         usage: "Specify the database name",
-        default: ''
+        default: '',
+        type: 'string'
       },
       dbUsername: {
         usage: "Specify the database username",
-        default: ''
+        default: '',
+        type: 'string'
       },
       dbPassword: {
         usage: "Specify the database password",
-        default: ''
+        default: '',
+        type: 'string'
       }
     }
 
@@ -44,11 +50,13 @@ class SequelizeMigrations {
           path: {
             usage: "Specify the migrations path (default is './migrations')",
             shortcut: "p",
-            default: "./migrations"
+            default: "./migrations",
+            type: 'string'
           },
           verbose: {
             usage: "Shows sequelize logs",
-            shortcut: "v"
+            shortcut: "v",
+            type: 'boolean'
           }
         },
         commands: {
@@ -59,7 +67,8 @@ class SequelizeMigrations {
               name: {
                 usage: "Specify the name of the migration to be created",
                 shortcut: "n",
-                required: true
+                required: true,
+                type: 'string'
               }
             }
           },
@@ -71,7 +80,8 @@ class SequelizeMigrations {
                 usage:
                   "Rolls back applied migrations in case of error (default is false)",
                 shortcut: "r",
-                default: false
+                default: false,
+                type: 'boolean'
               },
               ...dbConnectionOptions
             }
@@ -83,12 +93,14 @@ class SequelizeMigrations {
               times: {
                 usage: "Specify how many times to roll back (default is 1)",
                 shortcut: "t",
-                default: 1
+                default: 1,
+                type: 'string'
               },
               name: {
                 usage:
                   'Specify the name of the migration to be rolled back (e.g. "--name create-users.js")',
-                shortcut: "n"
+                shortcut: "n",
+                type: 'string'
               },
               ...dbConnectionOptions
             }
@@ -108,7 +120,8 @@ class SequelizeMigrations {
                 usage:
                   "Specify the status of migrations to be listed (--status pending [default] or --status executed)",
                 shortcut: "s",
-                default: "pending"
+                default: "pending",
+                type: 'string'
               },
               ...dbConnectionOptions
             }
