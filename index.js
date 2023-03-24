@@ -39,7 +39,6 @@ class SequelizeMigrations {
     this.commands = {
       migrations: {
         usage: "Sequelize migrations management for Serverless",
-        lifecycleEvents: ["showPluginInfo"],
         options: {
           path: {
             usage: "Specify the migrations path (default is './migrations')",
@@ -118,7 +117,6 @@ class SequelizeMigrations {
     };
 
     this.hooks = {
-      "migrations:showPluginInfo": this.showPluginInfo.bind(this),
       "migrations:up:run": this.migrate.bind(this),
       "migrations:down:run": this.revert.bind(this),
       "migrations:reset:run": this.reset.bind(this),
@@ -131,10 +129,6 @@ class SequelizeMigrations {
       this.options.path ||
       this.options.p ||
       _.get(this.serverless, "service.custom.migrationsPath");
-  }
-
-  showPluginInfo() {
-    this.serverless.cli.generateCommandsHelp(["migrations"]);
   }
 
   setUpMigrationsHandler() {

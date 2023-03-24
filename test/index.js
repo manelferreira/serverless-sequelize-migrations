@@ -24,7 +24,6 @@ describe("Serverless sequelize migrations", () => {
     it("should have hooks", () => {
       const hooks = Object.keys(this.plugin.hooks);
       expect(hooks).to.eql([
-        "migrations:showPluginInfo",
         "migrations:up:run",
         "migrations:down:run",
         "migrations:reset:run",
@@ -206,16 +205,6 @@ describe("Serverless sequelize migrations", () => {
         DB_USERNAME: "username",
         DB_PASSWORD: "password"
       };
-    });
-
-    it("show plugin info with success", () => {
-      const plugin = new SlsSequelizeMigrations(this.serverless, {});
-
-      plugin.showPluginInfo();
-
-      sinon.assert.calledWith(this.serverless.cli.generateCommandsHelp, [
-        "migrations"
-      ]);
     });
   });
 
