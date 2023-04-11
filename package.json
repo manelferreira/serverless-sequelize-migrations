@@ -1,5 +1,5 @@
 {
-  "name": "serverless-sequelize-migrations",
+  "name": "@mikeatjulaya/serverless-sequelize-migrations",
   "version": "1.1.1",
   "url": "https://github.com/manelferreira/serverless-sequelize-migrations",
   "description": "A Serverless plugin to manage sequelize migrations",
