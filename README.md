@@ -56,7 +56,7 @@ plugins:
 
 You can check whether the plugin is ready to be used through the terminal. To do so, type the following command on the CLI:
 
-`serverless`
+`serverless --help`
 
 the console should display _SequelizeMigrations_  as one of the available plugins in your Serverless project.
 
@@ -83,7 +83,7 @@ Replace the variables with the information of your own database.
 
 Obs: This plugin does not have support to create the database itself.
 
-As per [Sequelize docs](http://docs.sequelizejs.com/manual/getting-started), you'll have to manually install the driver for your database of choice:
+As per [Sequelize docs](https://sequelize.org/v5/manual/getting-started.html), you'll have to manually install the driver for your database of choice:
 
 ```
 # One of the following:
@@ -94,9 +94,8 @@ $ npm install --save tedious # Microsoft SQL Server
 ```
 
 ## Usage and command line options
-To see the available commands of the plugin, run `sls migrations` on the terminal. The following should appear:
+To see the available commands of the plugin, run `sls migrations --help` on the terminal. The following should appear:
 ```
-Plugin: SequelizeMigrations
 migrations .................... Sequelize migrations management for Serverless
 migrations create ............. Create a migration file
 migrations up ................. Execute all pending migrations
