@@ -24,7 +24,6 @@ describe("Serverless sequelize migrations", () => {
     it("should have hooks", () => {
       const hooks = Object.keys(this.plugin.hooks);
       expect(hooks).to.eql([
-        "migrations:showPluginInfo",
         "migrations:up:run",
         "migrations:down:run",
         "migrations:reset:run",
@@ -191,34 +190,6 @@ describe("Serverless sequelize migrations", () => {
     });
   });
 
-  describe("Show plugin info", () => {
-    before(() => {
-      this.serverless = {
-        cli: {
-          generateCommandsHelp: sinon.spy()
-        }
-      };
-
-      this.database = {
-        DB_DIALECT: "mysql",
-        DB_PORT: "3306",
-        DB_NAME: "name",
-        DB_USERNAME: "username",
-        DB_PASSWORD: "password"
-      };
-    });
-
-    it("show plugin info with success", () => {
-      const plugin = new SlsSequelizeMigrations(this.serverless, {});
-
-      plugin.showPluginInfo();
-
-      sinon.assert.calledWith(this.serverless.cli.generateCommandsHelp, [
-        "migrations"
-      ]);
-    });
-  });
-
   describe("Migrations methods", () => {
     describe("migrate", () => {
       beforeEach(() => {
@@ -328,6 +299,38 @@ describe("Serverless sequelize migrations", () => {
         await plugin.revert();
 
         sinon.assert.notCalled(process.exit);
+      });
+
+      context("when --times is defined", () => {
+        it("revert migrations with success", async () => {
+          const serverless = {
+            service: {
+              provider: {}
+            },
+            cli: {
+              log: () => {}
+            }
+          };
+
+          const options = {
+            times: '2'
+          };
+
+          const plugin = new SlsSequelizeMigrations(serverless, options);
+
+          const revertFunctionSpy = sinon.stub();
+  
+          plugin.setUpMigrationsHandler = () =>
+            sinon.createStubInstance(MigrationsHandler, {
+              revert: revertFunctionSpy
+            });
+  
+          await plugin.revert();
+  
+          sinon.assert.notCalled(process.exit);
+          sinon.assert.calledOnce(revertFunctionSpy);
+          sinon.assert.calledWith(revertFunctionSpy, 2);
+        });
       });
 
       it("fails if error is thrown", async () => {

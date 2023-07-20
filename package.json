@@ -1,6 +1,6 @@
 {
   "name": "serverless-sequelize-migrations",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "url": "https://github.com/manelferreira/serverless-sequelize-migrations",
   "description": "A Serverless plugin to manage sequelize migrations",
   "keywords": [
@@ -25,7 +25,7 @@
   "license": "ISC",
   "dependencies": {
     "lodash": "^4.17.15",
-    "sequelize": "^5.21.9",
+    "sequelize": "^5.22.5",
     "sequelize-cli": "^5.5.1",
     "umzug": "^2.3.0"
   },
@@ -39,9 +39,11 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-prettier": "^3.1.3",
     "eslint-plugin-react": "^7.20.0",
-    "mocha": "^6.2.3",
+    "mocha": "^10.2.0",
     "mysql2": "^1.7.0",
     "nyc": "^14.1.1",
+    "pg": "^8.11.1",
+    "pg-hstore": "^2.3.4",
     "prettier": "^1.19.1",
     "sinon": "^7.5.0"
   }
